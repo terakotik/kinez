@@ -1,0 +1,6 @@
+{
+  "name": "Kinez Diagnostic",
+  "description": "Энергетическая карта и нозологическая диагностика на основе симптомов, стихий и препаратов Баха.",
+  "requestFramePermissions": [],
+  "majorCapabilities": []
+}
