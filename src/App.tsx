@@ -127,10 +127,10 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-800 font-sans selection:bg-indigo-100 selection:text-indigo-900 overflow-x-hidden flex flex-col">
+    <div className="h-screen lg:h-screen bg-slate-50 text-slate-800 font-sans selection:bg-indigo-100 selection:text-indigo-900 overflow-hidden flex flex-col">
       
       {/* Header */}
-      <header className="h-20 lg:h-16 px-4 lg:px-10 flex flex-col lg:flex-row items-center justify-center lg:justify-between bg-white border-b border-slate-200 shrink-0 z-50 sticky top-0">
+      <header className="h-20 lg:h-16 px-4 lg:px-10 flex flex-col lg:flex-row items-center justify-center lg:justify-between bg-white border-b border-slate-200 shrink-0 z-50 sticky top-0 shadow-sm">
         <div className="flex items-center space-x-4 mb-2 lg:mb-0">
           <div 
             className="w-10 h-10 bg-gradient-to-br from-indigo-600 to-violet-700 rounded-xl flex items-center justify-center shadow-md cursor-pointer hover:scale-105 active:scale-95 transition-transform" 
@@ -178,7 +178,7 @@ export default function App() {
       </header>
 
       {/* Main Container */}
-      <main className="flex-1 p-4 lg:p-6 flex flex-col gap-6 overflow-y-auto lg:overflow-hidden min-h-0 scroll-smooth">
+      <main className="flex-1 p-4 md:p-6 flex flex-col gap-6 overflow-y-auto md:overflow-hidden min-h-0 scroll-smooth">
         
         <AnimatePresence mode="wait">
           {step < 3 ? (
@@ -187,30 +187,35 @@ export default function App() {
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: 20 }}
-              className="flex flex-col lg:grid lg:grid-cols-12 gap-6 lg:h-full min-h-0"
+              className="flex flex-col md:grid md:grid-cols-12 gap-6 md:h-full min-h-0"
             >
               {/* 1. КАТАЛОГ */}
-              <div className="lg:col-span-4 flex flex-col bg-white border border-slate-200 rounded-[32px] shadow-sm overflow-hidden min-h-[500px] lg:min-h-0 ring-1 ring-slate-200/50">
+              <div className="md:col-span-4 flex flex-col bg-white border border-slate-200 rounded-[32px] shadow-sm overflow-hidden min-h-[500px] md:min-h-0 ring-1 ring-slate-200/50">
                 <div className="p-6 border-b border-slate-100">
                   <div className="flex justify-between items-center mb-4">
                     <h2 className="text-xs font-black uppercase tracking-widest text-slate-400 italic">
-                      1. {step === 1 ? 'Нозология' : 'Этиология'}
+                      1. Справочник
                     </h2>
-                    {step === 2 && Object.keys(nosologyResults).length > 0 && (
-                      <button 
-                        onClick={() => setShowOnlyMatches(!showOnlyMatches)}
-                        className={`text-[10px] px-3 py-1.5 rounded-full font-black transition-all shadow-sm ${
-                          showOnlyMatches 
-                            ? 'bg-amber-500 text-white shadow-amber-200' 
-                            : 'bg-amber-50 text-amber-600 hover:bg-amber-100 border border-amber-100'
-                        }`}
-                      >
-                        {showOnlyMatches ? 'ПОКАЗАТЬ ВСЕ' : 'ТОЛЬКО СОВПАДЕНИЯ'}
-                      </button>
-                    )}
+                    <div className="flex items-center space-x-2">
+                      <span className="text-[10px] bg-slate-100 text-slate-500 px-2.5 py-1 rounded-lg font-black uppercase tracking-widest">
+                        {currentSelected.size} {step === 1 ? 'Нозология' : 'Этиология'}
+                      </span>
+                      {step === 2 && Object.keys(nosologyResults).length > 0 && (
+                        <button 
+                          onClick={() => setShowOnlyMatches(!showOnlyMatches)}
+                          className={`text-[10px] px-3 py-1.5 rounded-full font-black transition-all shadow-sm ${
+                            showOnlyMatches 
+                              ? 'bg-amber-500 text-white shadow-amber-200' 
+                              : 'bg-amber-50 text-amber-600 hover:bg-amber-100 border border-amber-100'
+                          }`}
+                        >
+                          {showOnlyMatches ? 'ПОКАЗАТЬ ВСЕ' : 'ТОЛЬКО СОВПАДЕНИЯ'}
+                        </button>
+                      )}
+                    </div>
                   </div>
                   <div className="mb-4">
-                    <p className="text-[11px] font-bold text-slate-500 leading-snug">
+                    <p className="text-[12px] font-bold text-slate-600 leading-snug">
                       {step === 1 
                         ? "Выберите заболевание или состояние (Нозологию). Это поможет системе подобрать корректные препараты."
                         : "Теперь выберите психосоматические причины (Этиологию). Обратите внимание на выделенные пункты."}
@@ -222,16 +227,15 @@ export default function App() {
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
                       placeholder={step === 1 ? "Выберите нозологию из списка..." : "Найдите симптомы или причины..."} 
-                      className="w-full p-3.5 bg-slate-50 border border-slate-200 rounded-2xl text-sm outline-none pl-11 focus:ring-2 focus:ring-indigo-500/20 transition-all font-medium"
+                      className="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl text-base outline-none pl-12 focus:ring-4 focus:ring-indigo-500/10 transition-all font-medium"
                     />
-                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5" />
                   </div>
                 </div>
                 <div className="flex-1 overflow-y-auto p-4 space-y-2 bg-slate-50/20 custom-scrollbar">
                   {filteredItems.map(itemKey => {
                     const itemData = (currentData as any)[itemKey];
                     const isSelected = currentSelected.has(itemKey);
-                    // On step 2 (Etiology), emphasize items that have remedies found in step 1 (Nosology)
                     const isRecommended = step === 2 && itemData.r.some((r: string) => nosologyResults[r]);
                     
                     return (
@@ -241,40 +245,41 @@ export default function App() {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         onClick={() => toggleSelection(itemKey)}
-                        className={`p-4 rounded-2xl text-xs font-bold cursor-pointer transition-all border ${
+                        className={`px-5 py-3 rounded-2xl text-xs font-bold cursor-pointer transition-all border ${
                           isSelected ? 'bg-indigo-50 border-indigo-200 text-indigo-700 shadow-sm' : 
-                          isRecommended ? 'bg-amber-50 border-amber-300 text-slate-800 ring-4 ring-amber-100 shadow-lg scale-[1.01]' : 'text-slate-500 hover:bg-slate-100 border-transparent bg-white/50'
+                          isRecommended ? 'bg-amber-50 border-amber-300 text-slate-800 ring-4 ring-amber-100 shadow-lg scale-[1.01]' : 'text-slate-600 hover:bg-slate-50 border-transparent bg-white shadow-sm'
                         } flex flex-col group overflow-hidden relative`}
                       >
-                        <div className="flex justify-between items-center mb-2">
-                          <span className="flex items-center text-sm font-black">
+                        <div className="flex justify-between items-center">
+                          <span className={`${isSelected ? 'text-sm' : 'text-[13px]'} font-bold transition-all flex items-center`}>
                             {isRecommended && <Star className="w-3.5 h-3.5 mr-2 text-amber-500 fill-amber-500 animate-pulse" />}
                             {itemKey}
                           </span>
-                          {isSelected && <CheckCircle2 className="w-4 h-4 text-indigo-600" />}
+                          {isSelected ? <CheckCircle2 className="w-5 h-5 text-indigo-600" /> : <ChevronRight className="w-4 h-4 text-slate-200 group-hover:text-slate-400 transition-colors" />}
                         </div>
                         
-                        {/* Реактивы/Препараты связанные с этим пунктом */}
-                        <div className="mt-2 pt-2 border-t border-slate-200/50">
-                          <p className="text-[9px] text-slate-400 uppercase font-black mb-2">Препараты в этом пункте:</p>
-                          <div className="flex flex-wrap gap-2">
-                            {itemData.r.map((rem: string) => {
-                            const isAlreadyDetected = step === 2 && nosologyResults[rem];
-                            return (
-                              <span 
-                                key={rem} 
-                                className={`text-[11px] px-2.5 py-1.5 rounded-lg uppercase tracking-normal border transition-all ${
-                                  isAlreadyDetected 
-                                    ? 'bg-amber-500 text-white border-amber-600 font-black shadow-md scale-110 z-10' 
-                                    : 'bg-slate-100 text-slate-500 border-slate-200 font-bold'
-                                }`}
-                              >
-                                {rem}
-                              </span>
-                            );
-                          })}
+                        {/* Реактивы видны только если выбрано или рекомендовано, чтобы не загромождать список */}
+                        {(isSelected || isRecommended) && (
+                          <div className="mt-2 pt-2 border-t border-slate-200/50">
+                            <div className="flex flex-wrap gap-1">
+                              {itemData.r.map((rem: string) => {
+                                const isAlreadyDetected = step === 2 && nosologyResults[rem];
+                                return (
+                                  <span 
+                                    key={rem} 
+                                    className={`text-[10px] px-2 py-0.5 rounded-lg uppercase tracking-normal border ${
+                                      isAlreadyDetected 
+                                        ? 'bg-amber-500 text-white border-amber-600 font-black' 
+                                        : 'bg-slate-100 text-slate-400 border-slate-200'
+                                    }`}
+                                  >
+                                    {rem}
+                                  </span>
+                                );
+                              })}
+                            </div>
                           </div>
-                        </div>
+                        )}
                       </motion.div>
                     );
                   })}
@@ -282,12 +287,12 @@ export default function App() {
               </div>
 
               {/* 2. СВЯЗИ (АНИМИРОВАННЫЕ) */}
-              <div className="lg:col-span-5 flex flex-col bg-slate-100/50 border border-slate-200 rounded-[32px] shadow-sm overflow-hidden min-h-[400px] lg:min-h-0 ring-1 ring-slate-200/50">
+              <div className="md:col-span-5 flex flex-col bg-slate-100/50 border border-slate-200 rounded-[32px] shadow-sm overflow-hidden min-h-[400px] md:min-h-0 ring-1 ring-slate-200/50">
                 <div className="p-6 border-b border-slate-100 bg-white">
                   <h2 className="text-xs font-black uppercase tracking-widest text-indigo-600 mb-1">2. Энергетические Связи</h2>
                   <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Детекция препаратов</p>
                 </div>
-                <div className="flex-1 overflow-y-auto p-4 lg:p-6 space-y-4 custom-scrollbar bg-slate-50/10">
+                <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-4 custom-scrollbar bg-slate-50/10">
                   <AnimatePresence mode="popLayout" initial={false}>
                     {allIdentifiedRemediesArr.length === 0 ? (
                       <motion.div 
@@ -313,26 +318,25 @@ export default function App() {
                             initial={{ opacity: 0, scale: 0.9, y: 10 }}
                             animate={{ opacity: 1, scale: 1, y: 0 }}
                             exit={{ opacity: 0, scale: 0.9 }}
-                            className={`p-5 rounded-3xl bg-white border-t-4 shadow-sm border ${isSynergic ? 'border-amber-300 ring-2 ring-amber-100' : 'border-slate-100'} group transition-all hover:shadow-md`} 
+                            className={`p-4 rounded-2xl bg-white border-t-2 shadow-sm border ${isSynergic ? 'border-amber-300 ring-2 ring-amber-100' : 'border-slate-100'} group transition-all hover:shadow-md`} 
                             style={{ borderTopColor: config.border.split('-')[1] === 'red' ? '#ef4444' : config.label === 'Вода' ? '#3b82f6' : config.label === 'Земля' ? '#92400e' : config.label === 'Дерево' ? '#10b981' : '#64748b' }}
                           >
-                            <div className="flex justify-between items-start mb-2">
+                            <div className="flex justify-between items-start mb-1.5">
                                <div>
                                  <div className="flex items-center space-x-2">
-                                    <span className="text-[10px] font-black text-indigo-600 uppercase tracking-wider">{remKey}</span>
-                                    {isSynergic && <span className="bg-amber-500 text-white text-[7px] px-1.5 py-0.5 rounded-full font-black animate-pulse">СИНЕРГИЯ</span>}
+                                    <span className="text-[9px] font-black text-indigo-600 uppercase tracking-wider">{remKey}</span>
+                                    {isSynergic && <Zap className="w-3 h-3 text-amber-500 fill-amber-500 animate-pulse" />}
                                  </div>
-                                 <h3 className="text-base font-black text-slate-800">{info.ru}</h3>
+                                 <h3 className={`font-black text-slate-800 ${isSynergic ? 'text-sm' : 'text-xs'}`}>{info.ru}</h3>
                                </div>
-                               <span className="text-xl group-hover:scale-110 transition-transform">{config.icon}</span>
+                               <span className="text-lg group-hover:scale-110 transition-transform">{config.icon}</span>
                             </div>
-                            <div className={`text-[9px] font-bold ${config.color} uppercase mb-3 flex items-center`}>
-                              <span className="w-2 h-2 rounded-full bg-current mr-2 animate-pulse"></span>
+                            <div className={`text-[8px] font-bold ${config.color} uppercase mb-2 flex items-center opacity-70`}>
                               {config.label} ({config.force})
                             </div>
-                            <div className="space-y-2">
-                              {noItems && <div className="flex flex-wrap gap-1"><span className="w-full text-[7px] text-indigo-300 uppercase font-black">В Нозологии:</span>{noItems.map(s => <span key={s} className="text-[8px] bg-slate-50 px-2 py-0.5 rounded-full text-slate-500 font-bold border border-slate-100">{s}</span>)}</div>}
-                              {etItems && <div className="flex flex-wrap gap-1"><span className="w-full text-[7px] text-amber-500 uppercase font-black">В Этиологии:</span>{etItems.map(s => <span key={s} className="text-[8px] bg-amber-50 px-2 py-0.5 rounded-full text-amber-600 font-bold border border-amber-100">{s}</span>)}</div>}
+                            <div className="space-y-1 pt-1 border-t border-slate-50">
+                              {noItems && <div className="flex flex-wrap gap-1"><span className="text-[7px] text-indigo-300 uppercase font-black">В Ноз.:</span>{noItems.map(s => <span key={s} className="text-[7px] bg-slate-50 px-1.5 py-0.5 rounded text-slate-500 font-bold border border-slate-100">{s}</span>)}</div>}
+                              {etItems && <div className="flex flex-wrap gap-1"><span className="text-[7px] text-amber-500 uppercase font-black">В Этио.:</span>{etItems.map(s => <span key={s} className="text-[7px] bg-amber-50 px-1.5 py-0.5 rounded text-amber-600 font-bold border border-amber-100">{s}</span>)}</div>}
                             </div>
                           </motion.div>
                         );
@@ -343,12 +347,12 @@ export default function App() {
               </div>
 
               {/* 3. ОРГАНЫ */}
-              <div className="lg:col-span-3 flex flex-col bg-white border border-slate-200 rounded-[32px] shadow-sm overflow-hidden min-h-[300px] lg:min-h-0 ring-1 ring-slate-200/50">
+              <div className="md:col-span-3 flex flex-col bg-white border border-slate-200 rounded-[32px] shadow-sm overflow-hidden min-h-[300px] md:min-h-0 ring-1 ring-slate-200/50">
                 <div className="p-6 border-b border-indigo-100 bg-indigo-50/30 shrink-0">
                   <h2 className="text-xs font-black uppercase tracking-widest text-indigo-600 mb-1">3. Системы Организма</h2>
                   <p className="text-[10px] text-indigo-400 font-bold italic">Проекция физического состояния</p>
                 </div>
-                <div className="flex-1 overflow-y-auto p-4 lg:p-6 space-y-3 custom-scrollbar">
+                <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-3 custom-scrollbar">
                   <AnimatePresence mode="popLayout" initial={false}>
                     {targetOrgansArr.length === 0 ? (
                       <motion.div key="empty-organs" initial={{ opacity: 0 }} animate={{ opacity: 0.2 }} className="h-full py-10 flex flex-col items-center justify-center"><Activity className="w-10 h-10 mb-2" /><span className="text-[9px] font-black uppercase">Ожидание выбора</span></motion.div>
@@ -377,16 +381,16 @@ export default function App() {
                   <button 
                     onClick={() => handleStepChange(step === 1 ? 2 : 3)}
                     disabled={(step === 1 && selectedNosology.size === 0) || (step === 2 && selectedSymptoms.size === 0)}
-                    className="w-full py-5 bg-gradient-to-r from-indigo-600 to-violet-600 text-white rounded-2xl font-black uppercase text-[10px] tracking-[0.2em] shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-30 disabled:pointer-events-none group ring-4 ring-indigo-100 ring-offset-2"
+                    className="w-full py-6 bg-gradient-to-r from-indigo-600 to-violet-600 text-white rounded-2xl font-black uppercase text-[12px] tracking-[0.2em] shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-30 disabled:pointer-events-none group ring-4 ring-indigo-100 ring-offset-2"
                   >
-                    <span className="flex items-center justify-center">{step === 1 ? 'Далее к Этиологии' : 'Сформировать Анамнез'} <ChevronRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" /></span>
+                    <span className="flex items-center justify-center">{step === 1 ? 'Далее к Этиологии' : 'Анамнез'} <ChevronRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" /></span>
                   </button>
                   {step === 2 && (
                     <button 
                       onClick={() => handleStepChange(1)} 
-                      className="w-full mt-4 py-2 text-slate-400 font-bold uppercase text-[9px] hover:text-indigo-600 transition-colors flex items-center justify-center border-2 border-transparent hover:border-slate-100 rounded-xl"
+                      className="w-full mt-4 py-3 text-slate-400 font-bold uppercase text-[10px] hover:text-indigo-600 transition-colors flex items-center justify-center border-2 border-transparent hover:border-slate-100 rounded-xl"
                     >
-                      <ChevronLeft className="w-3 h-3 mr-1" /> Назад к Нозологии
+                      <ChevronLeft className="w-4 h-4 mr-1" /> Назад к Нозологии
                     </button>
                   )}
                 </div>
@@ -399,7 +403,7 @@ export default function App() {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 1.05 }}
-              className="flex-1 flex flex-col lg:flex-row gap-8 lg:overflow-hidden bg-white rounded-[40px] border border-slate-200 shadow-2xl p-4 md:p-8"
+              className="flex-1 flex flex-col md:flex-row gap-8 md:overflow-hidden bg-white rounded-[40px] border border-slate-200 shadow-2xl p-4 md:p-8"
             >
               <div className="flex-1 flex flex-col min-h-0">
                 <div className="flex items-center mb-8 border-b border-slate-100 pb-6 shrink-0">
@@ -412,7 +416,7 @@ export default function App() {
                    </div>
                 </div>
 
-                <div className="flex-1 lg:overflow-y-auto pr-0 lg:pr-4 custom-scrollbar space-y-8">
+                <div className="flex-1 md:overflow-y-auto pr-0 md:pr-4 custom-scrollbar space-y-8">
                    {synergyRemedies.length > 0 && (
                      <section id="synergy-report" className="animate-in fade-in slide-in-from-bottom-4 duration-1000">
                       <h3 className="text-xs font-black uppercase text-amber-600 tracking-widest mb-4 flex items-center">
@@ -529,7 +533,7 @@ export default function App() {
       </main>
 
       {/* Mobile Footer Sticky Action */}
-      <div className="lg:hidden p-4 bg-white border-t border-slate-200 sticky bottom-0 z-50 flex space-x-2">
+      <div className="md:hidden p-4 bg-white border-t border-slate-200 sticky bottom-0 z-50 flex space-x-2">
          {step === 2 && (
             <button 
               onClick={() => handleStepChange(1)} 
