@@ -26,8 +26,8 @@ export default function App() {
     setSearchTerm('');
   };
 
-  const currentData = step === 1 ? SYMPTOMS_DATA : NOSOLOGY_DATA;
-  const currentSelected = step === 1 ? selectedSymptoms : selectedNosology;
+  const currentData = step === 1 ? NOSOLOGY_DATA : SYMPTOMS_DATA;
+  const currentSelected = step === 1 ? selectedNosology : selectedSymptoms;
 
   // Diagnostics calculations
   const etiologyResults = useMemo(() => {
@@ -77,25 +77,25 @@ export default function App() {
     const matchesSearch = items.filter(s => s.toLowerCase().includes(searchTerm.toLowerCase()));
     
     if (step === 2) {
-      // Prioritize items that match remedies already found in step 1
+      // Prioritize items that match remedies already found in step 1 (Nosology)
       return matchesSearch.sort((a,b) => {
-        const aRelevance = NOSOLOGY_DATA[a].r.some(r => etiologyResults[r]) ? 1 : 0;
-        const bRelevance = NOSOLOGY_DATA[b].r.some(r => etiologyResults[r]) ? 1 : 0;
+        const aRelevance = SYMPTOMS_DATA[a].r.some(r => nosologyResults[r]) ? 1 : 0;
+        const bRelevance = SYMPTOMS_DATA[b].r.some(r => nosologyResults[r]) ? 1 : 0;
         return bRelevance - aRelevance;
       });
     }
     return matchesSearch;
-  }, [searchTerm, currentData, step, etiologyResults]);
+  }, [searchTerm, currentData, step, nosologyResults]);
 
   const toggleSelection = (key: string) => {
     if (step === 1) {
-      const next = new Set(selectedSymptoms);
-      next.has(key) ? next.delete(key) : next.add(key);
-      setSelectedSymptoms(next);
-    } else if (step === 2) {
       const next = new Set(selectedNosology);
       next.has(key) ? next.delete(key) : next.add(key);
       setSelectedNosology(next);
+    } else if (step === 2) {
+      const next = new Set(selectedSymptoms);
+      next.has(key) ? next.delete(key) : next.add(key);
+      setSelectedSymptoms(next);
     }
   };
 
@@ -119,7 +119,7 @@ export default function App() {
             <h1 className="text-lg font-black tracking-tighter text-slate-800 leading-none">
               KINEZ SYSTEM 
               <span className="text-indigo-600 font-medium ml-2 text-xs uppercase tracking-widest hidden md:inline">
-                {step === 1 ? 'Шаг 1: Этиология' : step === 2 ? 'Шаг 2: Нозология' : 'Шаг 3: Анамнез'}
+                {step === 1 ? 'Шаг 1: Нозология' : step === 2 ? 'Шаг 2: Этиология' : 'Шаг 3: Анамнез'}
               </span>
             </h1>
             <p className="text-[9px] uppercase tracking-[0.2em] text-slate-400 font-bold mt-1 uppercase">МОДУЛЬ КЛИНИЧЕСКОГО АНАЛИЗА</p>
@@ -135,20 +135,20 @@ export default function App() {
             <span>Начать заново</span>
           </button>
           <div className="flex items-center space-x-2 border-l border-slate-100 pl-6">
-            <div className="flex space-x-1 cursor-pointer">
-              <div 
-                onClick={() => setStep(1)} 
-                className={`h-1.5 w-8 rounded-full transition-all duration-300 ${step >= 1 ? 'bg-indigo-600' : 'bg-slate-200'}`}
-              ></div>
-              <div 
-                onClick={() => selectedSymptoms.size > 0 ? setStep(2) : null} 
-                className={`h-1.5 w-8 rounded-full transition-all duration-300 ${step >= 2 ? 'bg-indigo-600' : 'bg-slate-200'} ${selectedSymptoms.size === 0 ? 'cursor-not-allowed opacity-30' : ''}`}
-              ></div>
-              <div 
-                onClick={() => selectedNosology.size > 0 ? setStep(3) : null} 
-                className={`h-1.5 w-8 rounded-full transition-all duration-300 ${step >= 3 ? 'bg-indigo-600' : 'bg-slate-200'} ${selectedNosology.size === 0 ? 'cursor-not-allowed opacity-30' : ''}`}
-              ></div>
-            </div>
+              <div className="flex space-x-1 cursor-pointer">
+                <div 
+                  onClick={() => setStep(1)} 
+                  className={`h-1.5 w-8 rounded-full transition-all duration-300 ${step >= 1 ? 'bg-indigo-600' : 'bg-slate-200'}`}
+                ></div>
+                <div 
+                  onClick={() => selectedNosology.size > 0 ? setStep(2) : null} 
+                  className={`h-1.5 w-8 rounded-full transition-all duration-300 ${step >= 2 ? 'bg-indigo-600' : 'bg-slate-200'} ${selectedNosology.size === 0 ? 'cursor-not-allowed opacity-30' : ''}`}
+                ></div>
+                <div 
+                  onClick={() => selectedSymptoms.size > 0 ? setStep(3) : null} 
+                  className={`h-1.5 w-8 rounded-full transition-all duration-300 ${step >= 3 ? 'bg-indigo-600' : 'bg-slate-200'} ${selectedSymptoms.size === 0 ? 'cursor-not-allowed opacity-30' : ''}`}
+                ></div>
+              </div>
             <span className="text-[10px] font-bold text-slate-400 ml-4 hidden lg:block uppercase tracking-widest">Прогресс: {step === 1 ? '33' : step === 2 ? '66' : '100'}%</span>
           </div>
         </div>
@@ -171,15 +171,15 @@ export default function App() {
                 <div className="p-6 border-b border-slate-100">
                   <div className="flex justify-between items-center mb-4">
                     <h2 className="text-xs font-black uppercase tracking-widest text-slate-400 italic">
-                      1. {step === 1 ? 'Этиология' : 'Нозология'}
+                      1. {step === 1 ? 'Нозология' : 'Этиология'}
                     </h2>
-                    {step === 2 && Object.keys(etiologyResults).length > 0 && (
+                    {step === 2 && Object.keys(nosologyResults).length > 0 && (
                       <motion.span 
                         initial={{ scale: 0.8, opacity: 0 }}
                         animate={{ scale: 1, opacity: 1 }}
                         className="text-[8px] bg-amber-50 text-amber-600 px-2 py-1 rounded-full font-bold"
                       >
-                        АКТУАЛЬНО ДЛЯ ВАС
+                        НАЙДЕНЫ СОВПАДЕНИЯ
                       </motion.span>
                     )}
                   </div>
@@ -198,7 +198,8 @@ export default function App() {
                   {filteredItems.map(itemKey => {
                     const itemData = (currentData as any)[itemKey];
                     const isSelected = currentSelected.has(itemKey);
-                    const isRecommended = step === 2 && itemData.r.some((r: string) => etiologyResults[r]);
+                    // On step 2 (Etiology), emphasize items that have remedies found in step 1 (Nosology)
+                    const isRecommended = step === 2 && itemData.r.some((r: string) => nosologyResults[r]);
                     
                     return (
                       <motion.div
@@ -209,30 +210,30 @@ export default function App() {
                         onClick={() => toggleSelection(itemKey)}
                         className={`p-4 rounded-2xl text-xs font-bold cursor-pointer transition-all border ${
                           isSelected ? 'bg-indigo-50 border-indigo-200 text-indigo-700 shadow-sm' : 
-                          isRecommended ? 'bg-amber-50 border-amber-200 text-slate-600 ring-2 ring-amber-100 ring-offset-1' : 'text-slate-500 hover:bg-slate-100 border-transparent bg-white/50'
-                        } flex flex-col group overflow-hidden`}
+                          isRecommended ? 'bg-amber-50 border-amber-300 text-slate-800 ring-4 ring-amber-100 shadow-lg scale-[1.01]' : 'text-slate-500 hover:bg-slate-100 border-transparent bg-white/50'
+                        } flex flex-col group overflow-hidden relative`}
                       >
                         <div className="flex justify-between items-center mb-2">
-                          <span className="flex items-center">
-                            {isRecommended && <Sparkles className="w-3 h-3 mr-2 text-amber-500" />}
+                          <span className="flex items-center text-sm font-black">
+                            {isRecommended && <Star className="w-3.5 h-3.5 mr-2 text-amber-500 fill-amber-500 animate-pulse" />}
                             {itemKey}
                           </span>
                           {isSelected && <CheckCircle2 className="w-4 h-4 text-indigo-600" />}
                         </div>
                         
                         {/* Реактивы/Препараты связанные с этим пунктом */}
-                        <div className="mt-2 pt-2 border-t border-slate-100/50">
-                          <p className="text-[7px] text-slate-400 uppercase font-black mb-1">Связанные препараты:</p>
-                          <div className="flex flex-wrap gap-1">
+                        <div className="mt-2 pt-2 border-t border-slate-200/50">
+                          <p className="text-[9px] text-slate-400 uppercase font-black mb-2">Препараты в этом пункте:</p>
+                          <div className="flex flex-wrap gap-2">
                             {itemData.r.map((rem: string) => {
-                            const isAlreadyDetected = step === 2 && etiologyResults[rem];
+                            const isAlreadyDetected = step === 2 && nosologyResults[rem];
                             return (
                               <span 
                                 key={rem} 
-                                className={`text-[7px] px-1.5 py-0.5 rounded-md uppercase tracking-tighter ${
+                                className={`text-[11px] px-2.5 py-1.5 rounded-lg uppercase tracking-normal border transition-all ${
                                   isAlreadyDetected 
-                                    ? 'bg-amber-100 text-amber-700 border border-amber-200 font-black' 
-                                    : 'bg-slate-100 text-slate-400 border border-slate-200 font-bold'
+                                    ? 'bg-amber-500 text-white border-amber-600 font-black shadow-md scale-110 z-10' 
+                                    : 'bg-slate-100 text-slate-500 border-slate-200 font-bold'
                                 }`}
                               >
                                 {rem}
@@ -338,17 +339,17 @@ export default function App() {
                 <div className="p-6 bg-white border-t border-slate-100 shrink-0">
                   <button 
                     onClick={() => step === 1 ? setStep(2) : setStep(3)}
-                    disabled={(step === 1 && selectedSymptoms.size === 0) || (step === 2 && selectedNosology.size === 0)}
+                    disabled={(step === 1 && selectedNosology.size === 0) || (step === 2 && selectedSymptoms.size === 0)}
                     className="w-full py-5 bg-gradient-to-r from-indigo-600 to-violet-600 text-white rounded-2xl font-black uppercase text-[10px] tracking-[0.2em] shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-30 disabled:pointer-events-none group"
                   >
-                    <span className="flex items-center justify-center">{step === 1 ? 'Далее к Нозологии' : 'Сформировать Анамнез'} <ChevronRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" /></span>
+                    <span className="flex items-center justify-center">{step === 1 ? 'Далее к Этиологии' : 'Сформировать Анамнез'} <ChevronRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" /></span>
                   </button>
                   {step === 2 && (
                     <button 
                       onClick={() => setStep(1)} 
                       className="w-full mt-3 py-2 text-slate-400 font-bold uppercase text-[9px] hover:text-indigo-600 transition-colors flex items-center justify-center"
                     >
-                      <ChevronLeft className="w-3 h-3 mr-1" /> Назад к Этиологии
+                      <ChevronLeft className="w-3 h-3 mr-1" /> Назад к Нозологии
                     </button>
                   )}
                 </div>
